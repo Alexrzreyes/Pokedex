@@ -14,3 +14,15 @@
 .margin-auto {
     margin: auto;
 }
+
+.text-center {
+    text-align: center;
+}
+
+.font-800 { 
+    font-weight:800
+}
+
+.bg-brown {
+    background-color: brown;
+}

@@ -1,21 +1,32 @@
+'use client'
 import Image from "next/image";
 import { useEffect } from "react";
 import Card from "../../components/card";
+import DataApi from "../../components/data"
+
+type Props = {
+  data: any;
+};
+
+// Solicitud a la API en el servidor
+// export const getServerSideProps = async () => {
+//   const res = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+//   const data = await res.json();
+//   console.log('data es: ', data);
+
+//   return {
+//     props: {
+//       data,
+//     },
+//   };
+// };
 
 export default function Home() {
 
-  // useEffect(()=>{
-  //   const getPokemon = async() => {
-  //     const query = await fetch('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/100.png');
-  //   }
-
-  // }, []);
-
   return (
-      <main>
+      <main className="bg-brown">
         
         <h1 className="text-center font-semibold text-4xl mb-6 margin-top-50">Pokedex!</h1>
-
         <Card></Card>
 
 
