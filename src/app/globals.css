@@ -3,3 +3,10 @@
 @tailwind utilities;
 
 
+.margin-50 {
+    margin: 50px;
+}
+
+.margin-top-50 {
+    margin-top: 50px;
+}
