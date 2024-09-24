@@ -1,2 +1,0 @@
-# Pokedex
-Pokedex Prueba técnica
