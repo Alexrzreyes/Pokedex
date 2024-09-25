@@ -2,9 +2,10 @@
 'use client'
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Dash from "./dash";
 
 interface PokeInfo {
-  imagenSrc: string,
+  src: string,
   nombre: string,
   atk: string,
   def: string,
@@ -14,12 +15,20 @@ interface PokeInfo {
   ab2: string,
 }
 
+interface PokeTypes {
+  name: string,
+  url: string,
+}
+
 export default function Search() {
   const [text, setText] = useState('')
   const [errorText, setErrorText] = useState('')
   const [isVisible, setVisible] = useState<boolean>(false);
+  //const [types, setTypes] = useState([]);
+  const [dataPokemonTypes, setPokeTypes] = useState<PokeInfo[]>([]);
+  const [selectedOption, setSelectedOption] = useState<string>('');
   const [pokeData, setPokeData] = useState<PokeInfo>({
-    imagenSrc: '',
+    src: '',
     nombre: '',
     atk: '',
     def: '',
@@ -32,6 +41,20 @@ export default function Search() {
   useEffect(() => {
     console.log('input text: ', text);
   }, [text]);
+
+  let types: any[] = [
+
+  ];
+  useEffect(() => {
+    const getTypes = async () => {
+      const query = await fetch('https://pokeapi.co/api/v2/type/?limit=10');
+      const response = await query.json();
+      // setPokeTypes([...response.results]);
+      types = [...response.results];
+      console.log('types: ', JSON.stringify(types));
+    }
+    getTypes();
+  }, []);
 
   const getPokemon = async () => {
     console.log('llamando getPokemon: ');
@@ -54,7 +77,7 @@ export default function Search() {
   }
 
   let pokeInfo = {
-    imagenSrc: '',
+    src: '',
     nombre: '',
     atk: '',
     def: '',
@@ -70,7 +93,7 @@ export default function Search() {
     moves: any; name: any; stats: any
     }) {
     //Obtener el numero
-    pokeInfo.imagenSrc = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/'+response.id+'.svg';
+    pokeInfo.src = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/'+response.id+'.svg';
 
     //Obtener el nombre
     let nombre = response.name;
@@ -109,6 +132,84 @@ export default function Search() {
     getPokemon();
   }
 
+  function handleSelectedOption(selected: any) {
+    setSelectedOption(selected);
+    console.log('Opcion seleccionada: ', selected);
+    let selectedData = types.find(type => type.name === selected);
+    console.log('types: ', types);
+    console.log('selectedData: ', selectedData);
+    getPokemonTypes(selectedData.url);
+  }
+
+  let sixPokemonsData = [];
+  const getPokemonTypes = async (url: string) => {
+    console.log('llamando getPokemonTypes: ');
+    setErrorText('Buscando por tipo...') 
+    const query = await fetch(url);
+    if (!query.ok) {
+      if (query.status === 404) {
+        console.log('No se encontraron los tipos de Pokemon');
+        setErrorText('Tipos de pokemon no encontrados ): Intentalo de nuevo');
+        setVisible(false)
+      }
+      return;
+    }
+    const response = await query.json();
+    console.log('response de types: ', response);
+    let firstSixPokemon = response.pokemon.slice(0, 6).map((p: { pokemon: { name: any; }; }) => p.pokemon.name);
+    console.log('firstSixPokemon', firstSixPokemon);
+    for(let i =0; i<6; i++) {
+      const query = await fetch('https://pokeapi.co/api/v2/pokemon/'+firstSixPokemon[i]);
+      const response = await query.json();
+      let current = {
+        src: '',
+        nombre: '',
+        atk: '',
+        def: '',
+        mov1: '',
+        mov2: '',
+        ab1: '',
+        ab2: '',
+      };
+      //Obtener el numero
+      current.src = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/'+response.id+'.svg';
+
+      //Obtener el nombre
+      let nombre = response.name;
+      let formatNombre = nombre.charAt(0).toUpperCase() + nombre.slice(1)
+      current.nombre = formatNombre;
+
+      //Obtener el atk
+      let attackStat = response.stats.find((stat: { stat: { name: string; }; }) => stat.stat.name === "attack");
+      console.log('curr attackStat: ', attackStat);
+      current.atk = attackStat.base_stat;
+
+      //Obtener la def
+      let defenseStat = response.stats.find((stat: { stat: { name: string; }; }) => stat.stat.name === "defense");
+      console.log('curr defenseStat: ', defenseStat);
+      current.def = defenseStat.base_stat;
+
+      //Obtener movimientos
+      let mov = response.moves;
+      let first = mov[0]?.move?.name;
+      let sec = mov[1]?.move?.name;
+
+      current.mov1 = first;
+      current.mov2 = sec;
+
+      //Obtener habilidades
+      let abs = response.abilities;
+      current.ab1 = abs[0]?.ability?.name;
+      current.ab2 = abs[1]?.ability?.name;
+
+      sixPokemonsData.push(current);
+    }
+    console.log('sixPokemonsData: ', sixPokemonsData);
+    setPokeTypes(sixPokemonsData);
+    //threePokemons = 
+    setErrorText('');
+  }
+
   return (
     <div className="relative rounded-md shadow-sm text-center">
       <input
@@ -127,17 +228,27 @@ export default function Search() {
         {errorText}
       </div>
       <div className="margin-50">
-        <label htmlFor="fruits">Filtrar por tipo:</label>
-        <select id="fruits" name="fruits" className="margin-l-10">
-          <option value="apple">Apple</option>
-          <option value="banana">Banana</option>
-          <option value="cherry">Cherry</option>
+        <label htmlFor="pokemonTypes">Buscar por tipo:</label>
+        <select id="pokemonTypes" name="pokemonTypes" className="margin-l-10" value={selectedOption} onChange={e => handleSelectedOption(e.target.value)}>
+          <option value="normal">Normal</option>
+          <option value="fighting">Fighting</option>
+          <option value="flying">Flying</option>
+          <option value="poison">Poison</option>
+          <option value="ground">Ground</option>
+          <option value="rock">Rock</option>
+          <option value="bug">Bug</option>
+          <option value="ghost">Ghost</option>
+          {/* {types.map((element, index) => (
+            <div className="relative">
+              <option value={element.name}>{element.name}</option>
+            </div>
+          ))} */}
         </select>
       </div>
 
       <div style={{ display: isVisible ? 'block' : 'none' }}>
         <Image
-          src={pokeData.imagenSrc}
+          src={pokeData.src}
           layout="intrinsic"
           alt="logo"
           width="200"
@@ -156,6 +267,8 @@ export default function Search() {
           </ul>
         </div>
       </div>
+
+      <Dash data={dataPokemonTypes}></Dash>
 
     </div>
   );
