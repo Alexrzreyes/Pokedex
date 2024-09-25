@@ -1,29 +1,6 @@
 import Image from "next/image";
-import { useEffect } from "react";
-
-interface PokeInfo {
-  imagenSrc: string,
-  nombre: string,
-  atk: string,
-  def: string,
-  mov1: string,
-  mov2: string,
-  ab1: string,
-  ab2: string,
-}
 
 export default function Dash(props: any) {
-
-  let pokeInfo = {
-    nombre: '',
-    atk: '',
-    def: '',
-    mov1: '',
-    mov2: '',
-    mov3: '',
-    hab1: '',
-    hab2: ''
-  }
 
   let info = props.data;
 

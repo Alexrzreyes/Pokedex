@@ -111,9 +111,6 @@ export default function Search() {
     setPokeData(pokeInfo);
   }
 
-  function searchPokemon() {
-    getPokemon();
-  }
 
   function handleSelectedOption(selected: any) {
     setSelectedOption(selected);
