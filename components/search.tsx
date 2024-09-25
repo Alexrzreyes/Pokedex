@@ -24,7 +24,7 @@ export default function Search() {
   const [text, setText] = useState('')
   const [errorText, setErrorText] = useState('')
   const [isVisible, setVisible] = useState<boolean>(false);
-  //const [types, setTypes] = useState([]);
+  const [types, setTypes] = useState<PokeTypes[]>([]);
   const [dataPokemonTypes, setPokeTypes] = useState<PokeInfo[]>([]);
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [pokeData, setPokeData] = useState<PokeInfo>({
@@ -42,15 +42,16 @@ export default function Search() {
     console.log('input text: ', text);
   }, [text]);
 
-  let types: any[] = [
+  // let types: any[] = [
 
-  ];
+  // ];
   useEffect(() => {
     const getTypes = async () => {
       const query = await fetch('https://pokeapi.co/api/v2/type/?limit=10');
       const response = await query.json();
-      // setPokeTypes([...response.results]);
-      types = [...response.results];
+      console.log('response de types: ', response);
+      setTypes([...response.results]);
+      //types = [...response.results];
       console.log('types: ', JSON.stringify(types));
     }
     getTypes();
