@@ -1,7 +1,8 @@
 'use client'
 import Image from "next/image";
 import { useEffect } from "react";
-import Card from "../../components/card";
+import Dash from "../../components/dash";
+import Search from "../../components/search";
 import DataApi from "../../components/data"
 
 type Props = {
@@ -27,7 +28,8 @@ export default function Home() {
       <main className="bg-brown">
         
         <h1 className="text-center font-semibold text-4xl mb-6 margin-top-50">Pokedex!</h1>
-        <Card></Card>
+        <Search/>
+        <Dash></Dash>
 
 
         {/* <div className="max-w-7x1 mx-auto py-12 margin-50">
