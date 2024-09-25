@@ -14,17 +14,6 @@ export default function Dash(props: any) {
     hab2: ''
   }
 
-  // useEffect(() => {
-  //   const getPokemon = async () => {
-  //     const query = await fetch('https://pokeapi.co/api/v2/pokemon/1');
-  //     const response = await query.json();
-  //     console.log('response de la API: ', response);
-  //     getPokeInfo(response);
-  //     console.log('pokeInfo: ', pokeInfo);
-  //   }
-  //   getPokemon();
-  // }, []);
-
   function getPokeInfo(response: {
     abilities: any;
     moves: any; name: any; stats: any
