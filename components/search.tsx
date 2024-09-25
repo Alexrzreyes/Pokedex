@@ -39,39 +39,25 @@ export default function Search() {
   })
 
   useEffect(() => {
-    console.log('input text: ', text);
-  }, [text]);
-
-  // let types: any[] = [
-
-  // ];
-  useEffect(() => {
     const getTypes = async () => {
       const query = await fetch('https://pokeapi.co/api/v2/type/?limit=10');
       const response = await query.json();
-      console.log('response de types: ', response);
       setTypes([...response.results]);
-      //types = [...response.results];
-      console.log('types: ', JSON.stringify(types));
     }
     getTypes();
   }, []);
 
   const getPokemon = async () => {
-    console.log('llamando getPokemon: ');
-    setErrorText('Buscando...') 
-    const query = await fetch('https://pokeapi.co/api/v2/pokemon/'+text);
+    setErrorText('Buscando...')
+    const query = await fetch('https://pokeapi.co/api/v2/pokemon/' + text);
     if (!query.ok) {
       if (query.status === 404) {
-        console.log('Intenta otro nombre o número de Pokemon');
         setErrorText('Pokemon no encontrado ): Intenta otro nombre o número de Pokemon');
         setVisible(false)
       }
       return;
     }
     const response = await query.json();
-    console.log('response: ', response);
-    console.log('response de la API: ', response);
     getPokeInfo(response);
     setErrorText('');
     setVisible(true);
@@ -92,9 +78,9 @@ export default function Search() {
     id: number;
     abilities: any;
     moves: any; name: any; stats: any
-    }) {
+  }) {
     //Obtener el numero
-    pokeInfo.src = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/'+response.id+'.svg';
+    pokeInfo.src = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/' + response.id + '.svg';
 
     //Obtener el nombre
     let nombre = response.name;
@@ -103,12 +89,10 @@ export default function Search() {
 
     //Obtener el atk
     let attackStat = response.stats.find((stat: { stat: { name: string; }; }) => stat.stat.name === "attack");
-    console.log('attackStat: ', attackStat);
     pokeInfo.atk = attackStat.base_stat;
 
     //Obtener la def
     let defenseStat = response.stats.find((stat: { stat: { name: string; }; }) => stat.stat.name === "defense");
-    console.log('defenseStat: ', defenseStat);
     pokeInfo.def = defenseStat.base_stat;
 
     //Obtener movimientos
@@ -124,43 +108,34 @@ export default function Search() {
     pokeInfo.ab1 = abs[0]?.ability?.name;
     pokeInfo.ab2 = abs[1]?.ability?.name;
 
-    console.log('pokeInfo: ', pokeInfo);
     setPokeData(pokeInfo);
   }
 
   function searchPokemon() {
-    console.log('el texto es: ', text);
     getPokemon();
   }
 
   function handleSelectedOption(selected: any) {
     setSelectedOption(selected);
-    console.log('Opcion seleccionada: ', selected);
     let selectedData = types.find(type => type.name === selected);
-    console.log('types: ', types);
-    console.log('selectedData: ', selectedData);
     getPokemonTypes(selectedData.url);
   }
 
   let sixPokemonsData = [];
   const getPokemonTypes = async (url: string) => {
-    console.log('llamando getPokemonTypes: ');
-    setErrorText('Buscando por tipo...') 
+    setErrorText('Buscando por tipo...')
     const query = await fetch(url);
     if (!query.ok) {
       if (query.status === 404) {
-        console.log('No se encontraron los tipos de Pokemon');
         setErrorText('Tipos de pokemon no encontrados ): Intentalo de nuevo');
         setVisible(false)
       }
       return;
     }
     const response = await query.json();
-    console.log('response de types: ', response);
     let firstSixPokemon = response.pokemon.slice(0, 6).map((p: { pokemon: { name: any; }; }) => p.pokemon.name);
-    console.log('firstSixPokemon', firstSixPokemon);
-    for(let i =0; i<6; i++) {
-      const query = await fetch('https://pokeapi.co/api/v2/pokemon/'+firstSixPokemon[i]);
+    for (let i = 0; i < 6; i++) {
+      const query = await fetch('https://pokeapi.co/api/v2/pokemon/' + firstSixPokemon[i]);
       const response = await query.json();
       let current = {
         src: '',
@@ -173,7 +148,7 @@ export default function Search() {
         ab2: '',
       };
       //Obtener el numero
-      current.src = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/'+response.id+'.svg';
+      current.src = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/' + response.id + '.svg';
 
       //Obtener el nombre
       let nombre = response.name;
@@ -182,12 +157,10 @@ export default function Search() {
 
       //Obtener el atk
       let attackStat = response.stats.find((stat: { stat: { name: string; }; }) => stat.stat.name === "attack");
-      console.log('curr attackStat: ', attackStat);
       current.atk = attackStat.base_stat;
 
       //Obtener la def
       let defenseStat = response.stats.find((stat: { stat: { name: string; }; }) => stat.stat.name === "defense");
-      console.log('curr defenseStat: ', defenseStat);
       current.def = defenseStat.base_stat;
 
       //Obtener movimientos
@@ -205,9 +178,7 @@ export default function Search() {
 
       sixPokemonsData.push(current);
     }
-    console.log('sixPokemonsData: ', sixPokemonsData);
     setPokeTypes(sixPokemonsData);
-    //threePokemons = 
     setErrorText('');
   }
 
@@ -239,11 +210,6 @@ export default function Search() {
           <option value="rock">Rock</option>
           <option value="bug">Bug</option>
           <option value="ghost">Ghost</option>
-          {/* {types.map((element, index) => (
-            <div className="relative">
-              <option value={element.name}>{element.name}</option>
-            </div>
-          ))} */}
         </select>
       </div>
 
